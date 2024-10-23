@@ -34,3 +34,24 @@ You can choose a delimiter that won't appear in email addresses (like ; or |).
 ```
 
 ### Owned entities
+
+### Migrations
+
+Different ways:
+
+- In runtime
+- Generate SQL Scripts
+
+- Call it in application code:
+
+```csharp
+  var app = builder.Build();
+
+  using (var scope = app.Services.CreateScope())
+  {
+      var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+      db.Database.Migrate();
+  }
+```
+
+- Have a separate container to run migration code and then run app. Arrange that with docker compose
