@@ -98,10 +98,34 @@ FindAsync (most performant) vs SIngleOrDefault (one or none) vs FirstOrDefault (
 
 ### Writing efficient EF Core
 
-Efficient Querying:
 
 1. Indexing
 
+In SQL Server nvarchar - unicode variable length character field. Unicode - wider character set. Unicode is wider than ASCII (e.g.: includes emojis etc.). Unicode takes 2 bytes per character and ASCII 1 byte per character
+
+In nvarchar 4000 characters. Nvarchar(max) - can hold 2GB worth of text. SQL Server have a limit of number of bytes in one row 8600 byte per row. If it is bigger than that it stores them on disk and stores a pointer to that disk location. So, in this case it is much harder to find values because it is on the disk.
+
+Non clustered index have limit of 1700 bytes and nvarchar max is well beyond that and therefore you can not put and index on this. That is optimization problem.
+
+nvarchar(max) - issue
+
+[MaxLength(50)] // can be solved like this: specify the maximum length here
+ public string Address{ get; set; }
+
+If you want string as index - set this. Max.
+
+Also if you don't need something to be nullable:
+[Required]
+
+ 2. Use tools: 
+ Model Snapshot
+ XEventProfiler
+Benchmarking
+
+
+
+ 4. 
+___________________________________
 Check these ideas:
 
 - Bulk execute
