@@ -98,14 +98,23 @@ FindAsync (most performant) vs SIngleOrDefault (one or none) vs FirstOrDefault (
 
 ### Writing efficient EF Core
 
+Efficient Querying:
+
+1. Indexing
+
 Check these ideas:
 
 - Bulk execute
 
 - Do not track readonly entities
  
-- Get only fields that you need (.Select)
- 
+- Project only properties that you need. Get only fields that you need (.Select)
+
+e.g.:
+
+context.Blogs.Select(b => b.Url)
+If you need to project out more than one column, project out to a C# anonymous type with the properties you want.
+
 - Use NoTracking
 
 - Async
