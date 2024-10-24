@@ -120,10 +120,12 @@ Also if you don't need something to be nullable:
  2. Use tools: 
  Model Snapshot
  XEventProfiler
+Entity Framework Visual Editor
+Linqpad
 Benchmarking
 
 
- 3. 
+ 4. 
 ___________________________________
 Check these ideas:
 
