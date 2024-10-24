@@ -123,8 +123,7 @@ Also if you don't need something to be nullable:
 Benchmarking
 
 
-
- 4. 
+ 3. 
 ___________________________________
 Check these ideas:
 
@@ -141,7 +140,11 @@ If you need to project out more than one column, project out to a C# anonymous t
 
 - Use NoTracking
 
+If you’re reading in entity classes directly and aren’t going to update them, including the AsNoTracking method in your query will boost performance and operation will be quicker.. It tells EF Core not to create a tracking snapshot of the entities loaded, which saves a bit of time and memory use. 
+  
 - Async
+  
+Microsoft recommends using asynchronous commands in ASP.NET applications to enhance scalability. By using async, threads are freed up while waiting for a database response, allowing them to handle other user requests, which improves overall application performance and responsiveness.
 
 - Use Skip and Take
 
