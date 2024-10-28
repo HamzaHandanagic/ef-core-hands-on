@@ -44,12 +44,23 @@ A DbContext instance represents a session with the database and can be used to q
 
 DbContext has four properties inside:
 
-- Database – This property is responsible for the Transactions, Database Migrations/Creations, and Raw SQL queries 
-- ChangeTracker – This property is used to track states of the entities retrieved via the same context instance 
+- Database – This property is responsible for the Transaction control, Database Migrations/Creations, and Raw SQL commands 
+- ChangeTracker – This property is used to track states of the entities retrieved via the same context instance. Provides access to EF Core’s change tracking code.
 - Model – This property provides access to the database model that EF Core uses when connecting or creating a database.
-- ContextId - A unique identifier for the context instance and pool lease, if any.
+- ContextId - A unique identifier for the instance of the DbContext and pool lease, if any. Its main
+role is to be a correlation ID for logging and debugging so that you can see what reads and writes were done from the same instance of the application’s DbContext.
 
-DbContext contains all DbSets and each set represent a table in the database.
+EF Core uses a property called State that’s attached to all tracked entities. For EF Core to detect a change, the entity must be tracked. Entities are tracked if you read them in without an AsNoTracking method in the query or when you call a Add, Update, Remove, or Attach method with an entity class as a parameter. When you call SaveChanges/SaveChangesAsync, by default, EF Code executes a method called ChangeTracker.DetectChanges, which compares the current entity’s data with the entity’s tracking snapshot. The State property holds the information about what you want to happen to that entity when you call the application’s DbContext method, SaveChanges. The State property is enum of type EntityState and it can be:
+- Added—The entity doesn’t yet exist in the database. SaveChanges will insert it.
+- Unchanged—The entity exists in the database and hasn’t been modified on the
+client. SaveChanges will ignore it.
+- Modified—The entity exists in the database and has been modified on the client.
+SaveChanges will update it.
+- Deleted—The entity exists in the database but should be deleted. SaveChanges
+will delete it.
+- Detached—The entity you provided isn’t tracked. SaveChanges doesn’t see it.
+
+The SaveChange/SaveChangeAsync methods change the State of all the tracked entity classes to Unchanged. DbContext contains all DbSets and each set represent a table in the database.
 
 The DbContext lifetime
 
@@ -142,7 +153,25 @@ If you need to project out more than one column, project out to a C# anonymous t
 
 - Use NoTracking
 
-If you’re reading in entity classes directly and aren’t going to update them, including the AsNoTracking method in your query will boost performance and operation will be quicker.. It tells EF Core not to create a tracking snapshot of the entities loaded, which saves a bit of time and memory use. 
+Using *AsNoTracking* and *AsNoTrackingWithIdentityResolution* improves readonly queries performance. If you’re reading in entity classes directly and aren’t going to update them, including the one of these methods in your query will boost performance and operation will be quicker. It tells EF Core not to create a tracking snapshot of the entities loaded, which saves a bit of time and memory use. 
+
+- AsNoTracking produces a quicker query time but doesn’t always represent the exact database relationships. It doesn’t execute the feature called identity resolution that ensures that there is only one instance of an entity per row in the database. Not applying the identity resolution feature to the query means that you might get an extra instances of entity classes.
+- AsNoTrackingWithIdentityResolution typically is quicker than a normal query but slower than the same query with AsNoTracking. The improvement is that the database relationships are represented.
+
+For example, you have 4 books in the database and the first two books with the same author. Next query:
+```csharp
+var books = context.Books
+.AsNoTracking()
+.Include(a => a.Author)
+.ToList();
+```
+The first two books have the same author. In the AsNoTracking query EF Core creates four instances of the Author class, two of which contain
+the same data. A query containing AsNoTrackingWithIdentityResolution (or a normal query) creates only three instances of the Author class, and the first two books point to the same instance.
+
+In most read-only scenarios, such as displaying each book alongside the author’s name, having multiple instances of the Author class doesn't typically impact performance, as these duplicates contain identical data. For such read-only queries, using the AsNoTracking method is ideal, as it optimizes query speed. However, if you’re leveraging relationships, such as generating a report of books linked to others by the same author, the AsNoTracking method could introduce issues. In cases like these, it’s better to use AsNoTrackingWithIdentityResolution to maintain relationship integrity.
+
+Before EF Core 3.0, the AsNoTracking method included the identity resolution stage, but in EF Core 3.0, which had a big focus
+on performance, the identity resolution was removed from the AsNoTracking method. Removing the identity-resolution call produced some problems with existing applications, so EF Core 5 added the AsNoTrackingWithIdentity-Resolution method to fix the problems.
   
 - Async
   
