@@ -181,6 +181,22 @@ Microsoft recommends using asynchronous commands in ASP.NET applications to enha
 
 - Batch updates
 
+All updates can be automatically batched together in a single roundtrip.
+
+Example:
+
+```csharp
+var blog = context.Blogs.Single(b => b.Url == "http://someblog.microsoft.com");
+blog.Url = "http://someotherblog.microsoft.com";
+context.Add(new Blog { Url = "http://newblog1.microsoft.com" });
+context.Add(new Blog { Url = "http://newblog2.microsoft.com" });
+context.SaveChanges();
+```
+
+Add two new blogs, to apply this, two SQL INSERT statements and one UPDATE statement are sent to the database. Rather than sending them one by one, EF Core tracks these changes internally, and executes them in a single roundtrip when SaveChanges is called.
+
+The benefits of batching degrade after around 40 statements for SQL Server, so EF Core will by default only execute up to 42 statements in a single batch, and execute additional statements in separate roundtrips.
+
 - Raw SQL Queries for complex scenarios
 
 - Compiled Queries
