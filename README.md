@@ -91,6 +91,11 @@ Entity Framework Core uses Language-Integrated Query (LINQ) to query data from t
 
 The distinction between IEnumerable<T> and IQueryable<T> sequences determines how the query is executed at runtime.
 
+var query = dbContext.Users
+.Where(u => u.IsActive) // Still part of IQueryable, will be translated to SQL
+.AsEnumerable() // Now it is IEnumerable, switching to in-memory
+.Where(u => u.Age > 30); // This filter will happen in-memory, not in SQL
+
 How query work:
 https://learn.microsoft.com/en-us/ef/core/querying/how-query-works
 
