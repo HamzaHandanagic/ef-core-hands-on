@@ -35,6 +35,12 @@ You can choose a delimiter that won't appear in email addresses (like ; or |).
 
 ### Owned entities
 
+### Joins
+
+The join methods provided in the LINQ framework are Join and GroupJoin. These methods perform equijoins, or joins that match two data sources based on equality of their keys. 
+
+The GroupJoin method has no direct equivalent in relational database terms, but it implements a superset of inner joins and left outer joins. A left outer join is a join that returns each element of the first (left) data source, even if it has no correlated elements in the other data source. Join - Joins two sequences based on key selector functions and extracts pairs of values.
+
 ### Migrations
 
 Different ways:
