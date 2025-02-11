@@ -212,3 +212,5 @@ The benefits of batching degrade after around 40 statements for SQL Server, so E
 
 - When testing use Release and not Debug mode because in debug mode some slow logging methods can be enabled. Diagnose issues: For the ASP.NET Core Web API, you can use Azure Application Insights locally in debug mode. Logging output. ASP.NET Core and EF Core’s logging output
 include timings.
+
+- Some LINQ commands need extra code to make them fit the way that the database works, such as the LINQ Average, Sum, Max, and other aggregate commands needed to handle a return of null. Just about the only aggregate that won’t return null is Count.
