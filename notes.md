@@ -37,9 +37,11 @@ You can choose a delimiter that won't appear in email addresses (like ; or |).
 
 ### Joins
 
-The join methods provided in the LINQ framework are Join and GroupJoin. These methods perform equijoins, or joins that match two data sources based on equality of their keys. 
+The join methods provided in the LINQ framework are Join and GroupJoin. These methods perform equijoins, or joins that match two data sources based on equality of their keys. Some LINQ commands have a good match to a database feature, but with some limitations on what the database can return. Examples are Join and GroupJoin.
 
 The GroupJoin method has no direct equivalent in relational database terms, but it implements a superset of inner joins and left outer joins. A left outer join is a join that returns each element of the first (left) data source, even if it has no correlated elements in the other data source. Join - Joins two sequences based on key selector functions and extracts pairs of values.
+
+While Left Join isn't a LINQ operator, relational databases have the concept of a Left Join which is frequently used in queries. A particular pattern in LINQ queries gives the same result as a LEFT JOIN on the server. EF Core identifies such patterns and generates the equivalent LEFT JOIN on the server side. The pattern involves creating a GroupJoin between both the data sources and then flattening out the grouping by using the SelectMany operator with DefaultIfEmpty on the grouping source to match null when the inner doesn't have a related element. 
 
 ### Migrations
 
