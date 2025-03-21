@@ -208,6 +208,9 @@ The benefits of batching degrade after around 40 statements for SQL Server, so E
 
 - Slow Query interceptor
 
+- Using ToListAsync and ToArrayAsync 
+https://steven-giesel.com/blogPost/70cebcf5-d171-4852-ae73-4950accfe999/be-careful-with-tolistasync-and-toarrayasync-in-entity-framework-core
+
 - FindAsync (most performant. Usage of notracking with findasync ?) vs SIngleOrDefault (one or none) vs FirstOrDefault () - a bit more performant but if we use indexes then not so much
 
 - When testing use Release and not Debug mode because in debug mode some slow logging methods can be enabled. Diagnose issues: For the ASP.NET Core Web API, you can use Azure Application Insights locally in debug mode. Logging output. ASP.NET Core and EF Core’s logging output
